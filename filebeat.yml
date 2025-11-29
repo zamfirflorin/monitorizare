@@ -1,0 +1,14 @@
+# filebeat.yml
+filebeat.inputs:
+  - type: filestream
+    id: app-log
+    enabled: true
+    paths:
+      - /var/log/myapp/app.log
+    parsers:
+      - ndjson:
+          target: ""   # flatten JSON fields
+
+
+output.logstash:
+  hosts: ["logstash:5044"]

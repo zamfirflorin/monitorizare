@@ -1,0 +1,78 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+#  # === Elasticsearch ===
+#  filebeat:
+#    image: docker.elastic.co/beats/filebeat:9.2.1
+#    depends_on:
+#      - logstash
+#    volumes:
+#      - ./filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+#      - /tmp/app.log:/tmp/app.log:ro
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.0
+#    environment:
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - discovery.type=single-node
+#      - xpack.security.enabled=false
+#      - xpack.security.http.ssl.enabled=false
+#      - xpack.security.transport.ssl.enabled=false
+#    ports:
+#      - "9200:9200"
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#
+#  # === Kibana ===
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.15.0
+#    ports:
+#      - "5601:5601"
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#    environment:
+#      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+#      XPACK_SECURITY_ENABLED: "false"
+#      XPACK_FLEET_ENABLED: "true"
+#
+#  # === Logstash (pentru a prelua logurile din /tmp/app.log) ===
+#  logstash:
+#    image: docker.elastic.co/logstash/logstash:8.15.0
+#    volumes:
+#      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+#      - /tmp/app.log:/tmp/app.log
+#    depends_on:
+#      - elasticsearch
+#    ports:
+#      - "5044:5044"
+
+  # === Prometheus ===
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node_exporter
+    ports:
+      - "9100:9100"
+
+#  # === Jaeger ===
+#  jaeger:
+#    image: jaegertracing/all-in-one:latest
+#    ports:
+#      - "16686:16686"  # UI
+#      - "6831:6831/udp"  # Agent (OTLP)
+#    environment:
+#      - COLLECTOR_OTLP_ENABLED=true
